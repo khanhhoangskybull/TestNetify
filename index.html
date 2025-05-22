@@ -10,7 +10,7 @@
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=480 height=854 tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width=360 height=640 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -50,12 +50,12 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/ChatGPT.loader.js";
+      var loaderUrl = buildUrl + "/ChatGPT-PvP.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/ChatGPT.data",
-        frameworkUrl: buildUrl + "/ChatGPT.framework.js",
-        codeUrl: buildUrl + "/ChatGPT.wasm",
+        dataUrl: buildUrl + "/ChatGPT-PvP.data.unityweb",
+        frameworkUrl: buildUrl + "/ChatGPT-PvP.framework.js.unityweb",
+        codeUrl: buildUrl + "/ChatGPT-PvP.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Skybull",
         productName: "SkybullBaseTemplate",
@@ -96,8 +96,8 @@
 
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "480px";
-        canvas.style.height = "854px";
+        canvas.style.width = "360px";
+        canvas.style.height = "640px";
       }
 
       document.querySelector("#unity-loading-bar").style.display = "block";
