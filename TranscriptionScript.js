@@ -38,13 +38,13 @@ function runspeechrecognition(listenContinuous) {
         console.log("Speech recognition ended");
         started = false;
 
-        if (!result && listenContinuous && !stop) {
-            setTimeout(() => {
-                if (!started) {
-                    recognization.start(); // Restart recognition
-                }
-            }, 100);
-        }
+        // if (!result && listenContinuous && !stop) {
+            // setTimeout(() => {
+                // if (!started) {
+                    // recognization.start(); // Restart recognition
+                // }
+            // }, 100);
+        // }
     };
 
     // Start recognition if it is not running and has not been stopped
