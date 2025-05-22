@@ -25,13 +25,13 @@ function runspeechrecognition(listenContinuous) {
         window.Gameinstance.SendMessage(GameObjName, "Result", transcript);
         result = true;
 
-        if (listenContinuous && !stop) {
-            setTimeout(() => {
-                if (!started) {
-                    recognization.start(); // Restart recognition
-                }
-            }, 100);
-        }
+        // if (listenContinuous && !stop) {
+            // setTimeout(() => {
+                // if (!started) {
+                    // recognization.start(); // Restart recognition
+                // }
+            // }, 100);
+        // }
     };
 
     recognization.onend = () => {
