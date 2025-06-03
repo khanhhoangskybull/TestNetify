@@ -49,12 +49,16 @@ function runspeechrecognition(listenContinuous) {
             // }, 100);
         // }
     };
-
-    // Start recognition if it is not running and has not been stopped
-    if (!started && stop) {
-        stop = false;
-        recognization.start();
-    }
+	
+	try	{
+		// Start recognition if it is not running and has not been stopped
+		if (!started && stop) {
+			stop = false;
+			recognization.start();
+		}
+	} catch (error) {
+	  console.error(error);
+	}
 }
 
 function stoprecognition() {
