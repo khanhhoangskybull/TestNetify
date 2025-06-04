@@ -2,6 +2,7 @@
 <html lang="en-us">
 <head>
     <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@2.1.0/dist/tonconnect-ui.min.js"></script>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | SkybullBaseTemplate</title>
@@ -26,6 +27,11 @@
       </div>
     </div>
     <script>
+      window.tonConnect = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: "https://seahorse-magnetic-officially.ngrok.app/api/ftp/File/get-file/eternal_king_mainnet.json",
+        testnet: true
+      });
+
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
@@ -58,11 +64,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/ChatGPT-PvP.loader.js";
+      var loaderUrl = buildUrl + "/TestNetify.loader.js";
       var config = {
-        dataUrl: buildUrl + "/ChatGPT-PvP.data.unityweb",
-        frameworkUrl: buildUrl + "/ChatGPT-PvP.framework.js.unityweb",
-        codeUrl: buildUrl + "/ChatGPT-PvP.wasm.unityweb",
+        dataUrl: buildUrl + "/TestNetify.data.unityweb",
+        frameworkUrl: buildUrl + "/TestNetify.framework.js.unityweb",
+        codeUrl: buildUrl + "/TestNetify.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Skybull",
         productName: "SkybullBaseTemplate",
