@@ -36,18 +36,18 @@ async function runspeechrecognition(listenContinuous) {
         window.Gameinstance.SendMessage(GameObjName, "OnMicEnd");
         
 
-        if (listenContinuous && listeningSessionActive && !result) {
-            console.log("Restarting recognition...");
-            setTimeout(() => {
-                if (!started && listeningSessionActive) {
-                    try {
-                        recognization.start();
-                    } catch (err) {
-                        console.error("Error restarting recognition:", err);
-                    }
-                }
-            }, 300);
-        }
+        // if (listenContinuous && listeningSessionActive && !result) {
+            // console.log("Restarting recognition...");
+            // setTimeout(() => {
+                // if (!started && listeningSessionActive) {
+                    // try {
+                        // recognization.start();
+                    // } catch (err) {
+                        // console.error("Error restarting recognition:", err);
+                    // }
+                // }
+            // }, 300);
+        // }
     };
 
     try {
