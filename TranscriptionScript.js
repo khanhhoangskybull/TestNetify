@@ -18,7 +18,7 @@ async function ensureMicPermission() {
     }
 }
 
-async function runSpeechRecognition(listenContinuous) {
+async function runspeechrecognition(listenContinuous) {
     await ensureMicPermission();
 
     recognization.onstart = () => {
