@@ -59,6 +59,20 @@ async function runspeechrecognition(listenContinuous) {
     }
 }
 
+async function askMicrophonePermission() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log("Microphone permission granted");
+
+        stream.getTracks().forEach(track => track.stop());
+
+        window.Gameinstance.SendMessage("MicHandler", "OnMicPermissionGranted");
+    } catch (err) {
+        console.error("User denied microphone permission:", err);
+        window.Gameinstance.SendMessage("MicHandler", "OnMicPermissionDenied");
+    }
+}
+
 function stopRecognition() {
     console.log("Stopping speech recognition");
     if (started) {
