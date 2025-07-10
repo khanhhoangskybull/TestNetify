@@ -1,27 +1,17 @@
 let recognization = new webkitSpeechRecognition();
-let micPermissionAsked = false;
-let listeningSessionActive = false;
+recognization.continuous = false;
+recognization.interimResults = false;
 
 var result = false;
 var stop = true;
 var started = false;
-var GameObjName = null;
+let listeningSessionActive = true;
 
-async function ensureMicPermission() {
-    if (!micPermissionAsked) {
-        micPermissionAsked = true;
-        try {
-            await navigator.mediaDevices.getUserMedia({ audio: true });
-            console.log("Mic permission granted already");
-        } catch (err) {
-            console.error("Mic permission denied", err);
-        }
-    }
-}
-
-async function runspeechrecognition(listenContinuous) {
-	listeningSessionActive = true;
-    await ensureMicPermission();
+async function runspeechrecognition(listenContinuous) {	
+	if (started){
+		console.log("Recognition already running");
+        return;
+	}
 
     recognization.onstart = () => {
         console.log("Speech recognition started");
@@ -41,36 +31,41 @@ async function runspeechrecognition(listenContinuous) {
     recognization.onend = () => {
         console.log("Speech recognition ended");
         started = false;
+		stop = true;
 
         window.Gameinstance.SendMessage(GameObjName, "OnMicEnd");
-        stop = true;
+        
 
         if (listenContinuous && listeningSessionActive && !result) {
             console.log("Restarting recognition...");
             setTimeout(() => {
-                if (listeningSessionActive) {
-                    recognization.start();
+                if (!started && listeningSessionActive) {
+                    try {
+                        recognization.start();
+                    } catch (err) {
+                        console.error("Error restarting recognition:", err);
+                    }
                 }
             }, 300);
         }
     };
 
     try {
-        if (!started && stop) {
-            stop = false;
+        if (!started && stop) {            
             recognization.start();
         }
     } catch (error) {
-        console.error(error);
+        console.error("Recognition start error:", error);
     }
 }
 
 function stopRecognition() {
     console.log("Stopping speech recognition");
-    recognization.stop();
+    if (started) {
+        recognization.stop();
+    }
     stop = true;
     started = false;
-	listeningSessionActive = false;
 }
 
 function SetGameObjectName(name) {
