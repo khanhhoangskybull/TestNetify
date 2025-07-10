@@ -1,5 +1,6 @@
 let recognization = new webkitSpeechRecognition();
 let micPermissionAsked = false;
+let listeningSessionActive = false;
 
 var result = false;
 var stop = true;
@@ -19,6 +20,7 @@ async function ensureMicPermission() {
 }
 
 async function runspeechrecognition(listenContinuous) {
+	listeningSessionActive = true;
     await ensureMicPermission();
 
     recognization.onstart = () => {
@@ -43,9 +45,13 @@ async function runspeechrecognition(listenContinuous) {
         window.Gameinstance.SendMessage(GameObjName, "OnMicEnd");
         stop = true;
 
-        if (listenContinuous && !result) {
+        if (listenContinuous && listeningSessionActive && !result) {
             console.log("Restarting recognition...");
-            recognization.start();
+            setTimeout(() => {
+                if (listeningSessionActive) {
+                    recognization.start();
+                }
+            }, 300);
         }
     };
 
@@ -64,6 +70,7 @@ function stopRecognition() {
     recognization.stop();
     stop = true;
     started = false;
+	listeningSessionActive = false;
 }
 
 function SetGameObjectName(name) {
