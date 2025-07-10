@@ -73,7 +73,7 @@ async function askMicrophonePermission() {
     }
 }
 
-function stopRecognition() {
+function stoprecognition() {
     console.log("Stopping speech recognition");
     if (started) {
         recognization.stop();
