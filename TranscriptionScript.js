@@ -7,7 +7,7 @@ var GameObjName = null;
 
 function SetGameObjectName(name) {
     GameObjName = name;
-    console.log(GameObjName);
+    console.log("Speech recognition SetGameObjectName:", GameObjName);
 }
 
 function runspeechrecognition(listenContinuous) {
