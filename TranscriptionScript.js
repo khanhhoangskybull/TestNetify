@@ -55,6 +55,7 @@ function runspeechrecognition(listenContinuous) {
 		if (!started && stop) {
 			stop = false;
 			recognization.start();
+			console.log("Start recognition if it is not running and has not been stopped");
 		}
 	} catch (error) {
 	  console.error(error);
