@@ -159,6 +159,7 @@
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
               }).then((unityInstance) => {
                   document.querySelector("#unity-loading-bar").style.display = "none";
+				  Gameinstance = unityInstance;
                   document.addEventListener("visibilitychange", function () {
                       if (document.hidden) {
                           unityInstance.SendMessage("AudioManager", "PauseMusicFromJS");
