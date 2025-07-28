@@ -7,8 +7,7 @@ var GameObjName = null;
 
 function SetGameObjectName(name) {
     GameObjName = name;
-    console.log("Speech recognition SetGameObjectName", GameObjName);
-	console.log("Speech recognition SetGameObjectName", name);
+    console.log(GameObjName);
 }
 
 function runspeechrecognition(listenContinuous) {
@@ -23,44 +22,36 @@ function runspeechrecognition(listenContinuous) {
         var transcript = e.results[0][0].transcript;
         console.log("Speech recognition result:", transcript);
 
-        window.Gameinstance.SendMessage(GameObjName, "OnMicResult", transcript);
+        window.Gameinstance.SendMessage(GameObjName, "Result", transcript);
         result = true;
 
-        // if (listenContinuous && !stop) {
-            // setTimeout(() => {
-                // if (!started) {
-                    // recognization.start(); // Restart recognition
-                // }
-            // }, 100);
-        // }
+        if (listenContinuous && !stop) {
+            setTimeout(() => {
+                if (!started) {
+                    recognization.start(); // Restart recognition
+                }
+            }, 100);
+        }
     };
 
     recognization.onend = () => {
         console.log("Speech recognition ended");
         started = false;
-		
-		window.Gameinstance.SendMessage(GameObjName, "OnMicEnd");
-		stop = true;
 
-        // if (!result && listenContinuous && !stop) {
-            // setTimeout(() => {
-                // if (!started) {
-                    // recognization.start(); // Restart recognition
-                // }
-            // }, 100);
-        // }
+        if (!result && listenContinuous && !stop) {
+            setTimeout(() => {
+                if (!started) {
+                    recognization.start(); // Restart recognition
+                }
+            }, 100);
+        }
     };
-	
-	try	{
-		// Start recognition if it is not running and has not been stopped
-		if (!started && stop) {
-			stop = false;
-			recognization.start();
-			console.log("Start recognition if it is not running and has not been stopped");
-		}
-	} catch (error) {
-	  console.error(error);
-	}
+
+    // Start recognition if it is not running and has not been stopped
+    if (!started && stop) {
+        stop = false;
+        recognization.start();
+    }
 }
 
 function stoprecognition() {
