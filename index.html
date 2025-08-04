@@ -63,18 +63,18 @@
         updateBannerVisibility();
       }
 
-        var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/PvP.loader.js";
-        var config = {
-            dataUrl: buildUrl + "/PvP.data.unityweb",
-            frameworkUrl: buildUrl + "/PvP.framework.js.unityweb",
-            codeUrl: buildUrl + "/PvP.wasm.unityweb",
-            streamingAssetsUrl: "StreamingAssets",
-            companyName: "Skybull",
-            productName: "SkybullBaseTemplate",
-            productVersion: "0.1.0",
-            showBanner: unityShowBanner,
-        };
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/ChatGPTPVP.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/ChatGPTPVP.data.unityweb",
+        frameworkUrl: buildUrl + "/ChatGPTPVP.framework.js.unityweb",
+        codeUrl: buildUrl + "/ChatGPTPVP.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Skybull",
+        productName: "SkybullBaseTemplate",
+        productVersion: "0.1.0",
+        showBanner: unityShowBanner,
+      };
 
       // By default Unity keeps WebGL canvas render target size matched with
       // the DOM size of the canvas element (scaled by window.devicePixelRatio)
@@ -105,28 +105,23 @@
 
       loadingBar.style.display = "block";
 
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                Gameinstance = unityInstance;
-                document.addEventListener("visibilitychange", function () {
-                    if (document.hidden) {
-                        unityInstance.SendMessage("AudioManager", "PauseMusicFromJS");
-                    } else {
-                        unityInstance.SendMessage("AudioManager", "ResumeMusicFromJS");
-                    }
-                });
-
-            }).catch((message) => {
-                alert(message);
-            });
-        };
-
-        document.body.appendChild(script);
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          loadingBar.style.display = "none";
+          Gameinstance =unityInstance;
+		  window.unityInstance=unityInstance;
+          fullscreenButton.onclick = () => {
+            unityInstance.SetFullscreen(1);
+          };
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
     </script>
   </body>
 </html>
