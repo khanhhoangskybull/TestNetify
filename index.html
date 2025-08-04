@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@2.1.0/dist/tonconnect-ui.min.js"></script>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | SkybullBaseTemplate</title>
@@ -97,17 +94,17 @@
             updateBannerVisibility();
         }
 
-        var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/ChatGPTPVP.loader.js";
-        var config = {
-            dataUrl: buildUrl + "/ChatGPTPVP.data.unityweb",
-            frameworkUrl: buildUrl + "/ChatGPTPVP.framework.js.unityweb",
-            codeUrl: buildUrl + "/ChatGPTPVP.wasm.unityweb",
-            streamingAssetsUrl: "StreamingAssets",
-            companyName: "Skybull",
-            productName: "SkybullBaseTemplate",
-            productVersion: "0.1.0",
-            showBanner: unityShowBanner,
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/ChatGPT_PVP_BUILD.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/ChatGPT_PVP_BUILD.data.unityweb",
+        frameworkUrl: buildUrl + "/ChatGPT_PVP_BUILD.framework.js.unityweb",
+        codeUrl: buildUrl + "/ChatGPT_PVP_BUILD.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Skybull",
+        productName: "SkybullBaseTemplate",
+        productVersion: "0.1.0",
+        showBanner: unityShowBanner,
         };
 
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
