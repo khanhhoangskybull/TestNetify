@@ -123,6 +123,48 @@
 
         document.body.appendChild(script);
     </script>
+	<input id="webglTextInput" 
+       style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;"
+       placeholder="" />
+
+<script>
+  const unityObjectName = "WebGLInputReceiver"; // Your Unity GameObject
+  const unityMethodOnChange = "OnOverlayTextChanged"; // Method to call
+
+  const input = document.getElementById("webglTextInput");
+
+  input.addEventListener("input", () => {
+    const value = input.value;
+    if (window.Gameinstance && window.Gameinstance.SendMessage) {
+      window.Gameinstance.SendMessage(unityObjectName, unityMethodOnChange, value);
+    }
+  });
+
+  input.addEventListener("blur", () => {
+    if (window.Gameinstance && window.Gameinstance.SendMessage) {
+      window.Gameinstance.SendMessage(unityObjectName, "OnOverlayEditEnd", "");
+    }
+    hideInput();
+  });
+
+  function showOverlayInput(initialText) {
+    input.value = initialText || "";
+    input.style.display = "block";
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+  }
+
+  function hideInput() {
+    input.style.display = "none";
+  }
+
+  window.WebGLOverlayInput = {
+    Show: showOverlayInput,
+    Hide: hideInput
+  };
+</script>
+
+
 <input id="keyboardHackInput"
        style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;" />
 
