@@ -126,18 +126,16 @@
 	<input id="webglTextInput" 
        style="
          position: absolute;
-         top: 60%;
-         left: 50%;
-         transform: translate(-50%, -50%);
-         padding: 10px;
-         font-size: 16px;
-         width: 70%;
-         border-radius: 8px;
-         border: 1px solid #ccc;
-         display: none;
-         z-index: 1000;
-       "
-       placeholder="Input your tactical commands" />
+         bottom: 0;
+         left: 0;
+         width: 1px;
+         height: 1px;
+         opacity: 0.01;
+         z-index: 9999;
+         border: none;
+         background: transparent;
+         caret-color: transparent;
+       " />
 
 <script>
   const unityObjectName = "WebGLInputReceiver"; // Your Unity GameObject
@@ -169,10 +167,26 @@
   function hideInput() {
     input.style.display = "none";
   }
+  
+  function forceFocusInput(initialText) {
+  console.log("[WebGLOverlayInput] forceFocusInput()");
+
+  const input = document.getElementById("webglTextInput");
+  input.value = initialText || "";
+  input.style.display = "block";
+
+  input.focus(); // must be in user action
+  input.setSelectionRange(input.value.length, input.value.length);
+
+  console.log("[WebGLOverlayInput] input.focus() triggered");
+}
+
 
   window.WebGLOverlayInput = {
-    Show: showOverlayInput,
-    Hide: hideInput
+    Show: forceFocusInput,
+    Hide: () => {
+		document.getElementById("webglTextInput").blur();
+	}
   };
 </script>
 	
