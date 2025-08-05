@@ -137,7 +137,7 @@
          display: none;
          z-index: 1000;
        "
-       placeholder="" />
+       placeholder="Input your tactical commands" />
 
 <script>
   const unityObjectName = "WebGLInputReceiver"; // Your Unity GameObject
@@ -162,14 +162,8 @@
   function showOverlayInput(initialText) {
     input.value = initialText || "";
     input.style.display = "block";
-	
-	console.log("[WebGLOverlayInput] Input focused.");
-	
-    setTimeout(() => {
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
-	console.log("[WebGLOverlayInput] Called focus()");
-  }, 50);
   }
 
   function hideInput() {
