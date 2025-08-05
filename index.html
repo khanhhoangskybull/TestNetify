@@ -163,31 +163,6 @@
     Hide: hideInput
   };
 </script>
-
-
-<input id="keyboardHackInput"
-       style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;" />
-
-<script>
-  const hackInput = document.getElementById("keyboardHackInput");
-
-  window.WebGLKeyboardHack = {
-    Show: function () {
-      hackInput.focus();
-    },
-    Hide: function () {
-      hackInput.blur();
-    }
-  };
-
-  hackInput.addEventListener("input", () => {
-    window.Gameinstance?.SendMessage("WebGLInputReceiver", "OnOverlayTextChanged", hackInput.value);
-  });
-
-  hackInput.addEventListener("blur", () => {
-    window.Gameinstance?.SendMessage("WebGLInputReceiver", "OnOverlayEditEnd", "");
-  });
-</script>
 	
 	
   </body>
