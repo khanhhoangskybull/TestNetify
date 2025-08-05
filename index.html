@@ -162,9 +162,12 @@
     input.value = initialText || "";
     input.style.display = "block";
 	
+	console.log("[WebGLOverlayInput] Input focused.");
+	
     setTimeout(() => {
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
+	console.log("[WebGLOverlayInput] Called focus()");
   }, 50);
   }
 
