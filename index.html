@@ -8,7 +8,13 @@
     <title>Unity WebGL Player | SkybullBaseTemplate</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-	
+	 <style>
+    #overlayInput::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 18px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+  </style>
 	<script>
       window.WebGLOverlayInput = {
         Show: function(){ console.warn('WebGLOverlayInput.Show called before init'); },
@@ -132,23 +138,25 @@
     </script>
 	<input id="overlayInput" 
 		style="
-	    position: absolute;
-         bottom: 50px;          /* cách đáy 80px */
+	   position: absolute;
+         bottom: 80px;
          left: 50%;
          transform: translateX(-50%);
-         width: 80%;            /* chiếm 80% chiều rộng màn hình */
+         width: 80%;
          height: 50px;
-         font-size: 18px;
-         border: 2px solid #ccc;
-         border-radius: 8px;
-         padding: 8px;
+         font-size: 20px;
+         font-family: Arial, Helvetica, sans-serif; /* chỉnh font giống TMP */
+         color: white;
+         background: rgba(0,0,0,0.2);  /* nền mờ */
+         border: 2px solid white;
+         border-radius: 12px;
+         padding: 10px 12px;
          box-sizing: border-box;
+         outline: none;
          z-index: 9999;
-         opacity: 0;             /* ẩn nhưng vẫn có thể focus */
+         opacity: 1;
        "
-       autocomplete="off"
-       autocorrect="off"
-       spellcheck="false" />
+       placeholder="Input your tactical commands"/>
 
 <script>
   const overlayInput = document.getElementById('overlayInput');
