@@ -188,7 +188,9 @@
   canvas.addEventListener("touchstart", () => {
     if (requestFocus) {
       console.log("[WebGLOverlayInput] Focusing input from touchstart");
+	  e.stopPropagation();
       input.style.display = "block";
+	  e.preventDefault();
       input.focus();
       input.setSelectionRange(input.value.length, input.value.length);
       requestFocus = false;
