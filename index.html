@@ -130,80 +130,43 @@
 
         document.body.appendChild(script);
     </script>
-	<input id="webglTextInput" 
-       style="
-	   position: absolute;
-		 top: 60%;
+	<input id="overlayInput" 
+		style="
+	    position: absolute;
+         bottom: 80px;          /* cách đáy 80px */
          left: 50%;
-         transform: translate(-50%, -50%);
-         padding: 10px;
-         font-size: 16px;
-         width: 70%;
+         transform: translateX(-50%);
+         width: 80%;            /* chiếm 80% chiều rộng màn hình */
+         height: 50px;
+         font-size: 18px;
+         border: 2px solid #ccc;
          border-radius: 8px;
-         border: 1px solid #ccc;
-         display: none;
-         z-index: 1000;
+         padding: 8px;
+         box-sizing: border-box;
+         z-index: 9999;
+         opacity: 0;             /* ẩn nhưng vẫn có thể focus */
        "
-       placeholder="Input your tactical commands" />
+       autocomplete="off"
+       autocorrect="off"
+       spellcheck="false" />
 
 <script>
-  const unityObjectName = "WebGLInputReceiver"; // GameObject name trong Unity
+  const overlayInput = document.getElementById('overlayInput');
+  const unityObjectName = "WebGLInputReceiver";
   const unityMethodOnChange = "OnOverlayTextChanged";
 
-  const input = document.getElementById("webglTextInput");
-  
-  let requestFocus = false;
-
-  // Lắng nghe input gõ từ bàn phím
-  input.addEventListener("input", () => {
-    const value = input.value;
+  overlayInput.addEventListener('input', () => {
     if (window.Gameinstance && window.Gameinstance.SendMessage) {
-      window.Gameinstance.SendMessage(unityObjectName, unityMethodOnChange, value);
+      window.Gameinstance.SendMessage(unityObjectName, unityMethodOnChange, overlayInput.value);
     }
   });
 
-  // Khi mất focus thì báo Unity và ẩn
-  input.addEventListener("blur", () => {
+  overlayInput.addEventListener('blur', () => {
     if (window.Gameinstance && window.Gameinstance.SendMessage) {
       window.Gameinstance.SendMessage(unityObjectName, "OnOverlayEditEnd", "");
     }
-    hideInput();
   });
-
-  // Gọi từ Unity (API giữ nguyên)
-  function showOverlayInput(initialText) {
-	console.log("[WebGLOverlayInput] Waiting for next tap to focus input1");
-    input.value = initialText || "";
-    requestFocus = true;
-    console.log("[WebGLOverlayInput] Waiting for next tap to focus input	2");
-  }
-
-  function hideInput() {
-    input.blur();
-    input.style.display = "none";
-    requestFocus = false;
-  }
-
-  // Bắt touchstart trực tiếp trên canvas để gọi focus
-  canvas.addEventListener("touchstart", () => {
-    if (requestFocus) {
-      console.log("[WebGLOverlayInput] Focusing input from touchstart");
-	  e.stopPropagation();
-      input.style.display = "block";
-	  e.preventDefault();
-      input.focus();
-      input.setSelectionRange(input.value.length, input.value.length);
-      requestFocus = false;
-    }
-  }, { passive: false });
-
-  // Public API cho Unity
-  window.WebGLOverlayInput = {
-    Show: showOverlayInput,
-    Hide: hideInput
-  };
 </script>
-	
 	
   </body>
 </html>
