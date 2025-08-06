@@ -140,11 +140,14 @@
        placeholder="Input your tactical commands" />
 
 <script>
-  const unityObjectName = "WebGLInputReceiver"; // Your Unity GameObject
-  const unityMethodOnChange = "OnOverlayTextChanged"; // Method to call
+  const unityObjectName = "WebGLInputReceiver"; // GameObject name trong Unity
+  const unityMethodOnChange = "OnOverlayTextChanged";
 
   const input = document.getElementById("webglTextInput");
+  const canvas = document.getElementById("unity-canvas");
+  let requestFocus = false;
 
+  // Lắng nghe input gõ từ bàn phím
   input.addEventListener("input", () => {
     const value = input.value;
     if (window.Gameinstance && window.Gameinstance.SendMessage) {
@@ -152,6 +155,7 @@
     }
   });
 
+  // Khi mất focus thì báo Unity và ẩn
   input.addEventListener("blur", () => {
     if (window.Gameinstance && window.Gameinstance.SendMessage) {
       window.Gameinstance.SendMessage(unityObjectName, "OnOverlayEditEnd", "");
@@ -159,36 +163,34 @@
     hideInput();
   });
 
+  // Gọi từ Unity (API giữ nguyên)
   function showOverlayInput(initialText) {
     input.value = initialText || "";
-    input.style.display = "block";
-    input.focus();
-    input.setSelectionRange(input.value.length, input.value.length);
+    requestFocus = true;
+    console.log("[WebGLOverlayInput] Waiting for next tap to focus input");
   }
 
   function hideInput() {
+    input.blur();
     input.style.display = "none";
+    requestFocus = false;
   }
-  
-  function forceFocusInput(initialText) {
-  console.log("[WebGLOverlayInput] forceFocusInput()");
 
-  const input = document.getElementById("webglTextInput");
-  input.value = initialText || "";
-  input.style.display = "block";
+  // Bắt touchstart trực tiếp trên canvas để gọi focus
+  canvas.addEventListener("touchstart", () => {
+    if (requestFocus) {
+      console.log("[WebGLOverlayInput] Focusing input from touchstart");
+      input.style.display = "block";
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+      requestFocus = false;
+    }
+  }, { passive: false });
 
-  input.focus(); // must be in user action
-  input.setSelectionRange(input.value.length, input.value.length);
-
-  console.log("[WebGLOverlayInput] input.focus() triggered");
-}
-
-
+  // Public API cho Unity
   window.WebGLOverlayInput = {
-    Show: forceFocusInput,
-    Hide: () => {
-		document.getElementById("webglTextInput").blur();
-	}
+    Show: showOverlayInput,
+    Hide: hideInput
   };
 </script>
 	
