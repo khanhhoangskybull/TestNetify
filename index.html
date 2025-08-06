@@ -7,31 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | SkybullBaseTemplate</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-	 <style>
-    #overlayInput::placeholder {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 18px;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-  </style>
-	<script>
-      window.WebGLOverlayInput = {
-        Show: function(){ console.warn('WebGLOverlayInput.Show called before init'); },
-        Hide: function(){ console.warn('WebGLOverlayInput.Hide called before init'); }
-      };
-    </script>
-	<input id="overlayInput" 
-		style="
-		  position: absolute;
-		opacity: 0.01; / keeps keyboard working on iOS */
-		color: transparent;
-		background: transparent;
-		border: none;
-		pointer-events: none;
-		z-index: -1;
-       "
-       placeholder="Input your tactical commands"/>
+    <link rel="stylesheet" href="TemplateData/style.css">	
   </head>
   <body>
     <script src ="TranscriptionScript.js"></script>
@@ -150,21 +126,23 @@
 	
 
 <script>
-  const overlayInput = document.getElementById('overlayInput');
-  const unityObjectName = "WebGLInputReceiver";
-  const unityMethodOnChange = "OnOverlayTextChanged";
+  // Hàm này sẽ chạy liên tục để ẩn input do Unity tạo
+  const hideUnityInput = () => {
+    const inputs = document.querySelectorAll("input, textarea");
+    inputs.forEach(el => {
+      if (!el.classList.contains("realInput")) { // tránh ẩn input thật của web
+        el.style.opacity = "0";
+        el.style.position = "absolute";
+        el.style.pointerEvents = "none";
+        el.style.height = "0";
+        el.style.width = "0";
+      }
+    });
+  };
 
-  overlayInput.addEventListener('input', () => {
-    if (window.Gameinstance && window.Gameinstance.SendMessage) {
-      window.Gameinstance.SendMessage(unityObjectName, unityMethodOnChange, overlayInput.value);
-    }
-  });
-
-  overlayInput.addEventListener('blur', () => {
-    if (window.Gameinstance && window.Gameinstance.SendMessage) {
-      window.Gameinstance.SendMessage(unityObjectName, "OnOverlayEditEnd", "");
-    }
-  });
+  // Quan sát DOM để ẩn ngay khi Unity tạo input mới
+  const observer = new MutationObserver(hideUnityInput);
+  observer.observe(document.body, { childList: true, subtree: true });
 </script>
 	
   </body>
