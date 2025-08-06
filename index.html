@@ -144,7 +144,7 @@
   const unityMethodOnChange = "OnOverlayTextChanged";
 
   const input = document.getElementById("webglTextInput");
-  const canvas = document.getElementById("unity-canvas");
+  
   let requestFocus = false;
 
   // Lắng nghe input gõ từ bàn phím
@@ -165,9 +165,10 @@
 
   // Gọi từ Unity (API giữ nguyên)
   function showOverlayInput(initialText) {
+	console.log("[WebGLOverlayInput] Waiting for next tap to focus input	1");
     input.value = initialText || "";
     requestFocus = true;
-    console.log("[WebGLOverlayInput] Waiting for next tap to focus input");
+    console.log("[WebGLOverlayInput] Waiting for next tap to focus input	2");
   }
 
   function hideInput() {
