@@ -8,6 +8,13 @@
     <title>Unity WebGL Player | SkybullBaseTemplate</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+	
+	<script>
+      window.WebGLOverlayInput = {
+        Show: function(){ console.warn('WebGLOverlayInput.Show called before init'); },
+        Hide: function(){ console.warn('WebGLOverlayInput.Hide called before init'); }
+      };
+    </script>
   </head>
   <body>
     <script src ="TranscriptionScript.js"></script>
@@ -165,7 +172,7 @@
 
   // Gọi từ Unity (API giữ nguyên)
   function showOverlayInput(initialText) {
-	console.log("[WebGLOverlayInput] Waiting for next tap to focus input	1");
+	console.log("[WebGLOverlayInput] Waiting for next tap to focus input1");
     input.value = initialText || "";
     requestFocus = true;
     console.log("[WebGLOverlayInput] Waiting for next tap to focus input	2");
