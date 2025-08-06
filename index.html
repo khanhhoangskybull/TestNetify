@@ -8,6 +8,17 @@
     <title>Unity WebGL Player | SkybullBaseTemplate</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">	
+	<style>
+	#unity-container input,
+	#unity-container textarea {
+    position: absolute !important;
+    left: -9999px; /* đẩy ra khỏi màn hình /
+    top: auto;
+    opacity: 0.01; / gần như trong suốt */
+    height: 1px;
+    width: 1px;
+    z-index: -1;
+}</style>
   </head>
   <body>
     <script src ="TranscriptionScript.js"></script>
@@ -142,7 +153,7 @@
             const inputs = doc.querySelectorAll("input, textarea");
             inputs.forEach(el => {
                 if (!el.classList.contains("realInput")) {
-                    el.style.opacity = "0";
+                    el.style.opacity = "0.01";
                     el.style.position = "absolute";
                     el.style.pointerEvents = "none";
                     el.style.height = "0";
