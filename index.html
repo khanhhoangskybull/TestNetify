@@ -124,23 +124,46 @@
         document.body.appendChild(script);
     </script>
 	<script>
-  // Hàm này sẽ chạy liên tục để ẩn input do Unity tạo
-  const hideUnityInput = () => {
-    const inputs = document.querySelectorAll("input, textarea");
-    inputs.forEach(el => {
-      if (!el.classList.contains("realInput")) { // tránh ẩn input thật của web
-        el.style.opacity = "0";
-        el.style.position = "absolute";
-        el.style.pointerEvents = "none";
-        el.style.height = "0";
-        el.style.width = "0";
-      }
-    });
-  };
+    const hideUnityInput = () => {
+        const allFrames = [window.document]; // tài liệu chính
 
-  // Quan sát DOM để ẩn ngay khi Unity tạo input mới
-  const observer = new MutationObserver(hideUnityInput);
-  observer.observe(document.body, { childList: true, subtree: true });
+        // Nếu có iframe thì thêm vào danh sách kiểm tra
+        document.querySelectorAll("iframe").forEach(frame => {
+            try {
+                if (frame.contentDocument) {
+                    allFrames.push(frame.contentDocument);
+                }
+            } catch (e) {
+                // Bỏ qua iframe cross-origin
+            }
+        });
+
+        allFrames.forEach(doc => {
+            const inputs = doc.querySelectorAll("input, textarea");
+            inputs.forEach(el => {
+                if (!el.classList.contains("realInput")) {
+                    el.style.opacity = "0";
+                    el.style.position = "absolute";
+                    el.style.pointerEvents = "none";
+                    el.style.height = "0";
+                    el.style.width = "0";
+                }
+            });
+        });
+    };
+
+    // Quan sát cả body và unity-container
+    const observer1 = new MutationObserver(hideUnityInput);
+    observer1.observe(document.body, { childList: true, subtree: true });
+
+    const unityContainer = document.getElementById("unity-container");
+    if (unityContainer) {
+        const observer2 = new MutationObserver(hideUnityInput);
+        observer2.observe(unityContainer, { childList: true, subtree: true });
+    }
+
+    // Chạy lặp lại mỗi 300ms để đảm bảo bắt được trên Android
+    setInterval(hideUnityInput, 300);
 </script>
   </body>
 </html>
