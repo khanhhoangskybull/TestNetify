@@ -21,6 +21,17 @@
         Hide: function(){ console.warn('WebGLOverlayInput.Hide called before init'); }
       };
     </script>
+	<input id="overlayInput" 
+		style="
+		  position: absolute;
+		opacity: 0.01; / keeps keyboard working on iOS */
+		color: transparent;
+		background: transparent;
+		border: none;
+		pointer-events: none;
+		z-index: -1;
+       "
+       placeholder="Input your tactical commands"/>
   </head>
   <body>
     <script src ="TranscriptionScript.js"></script>
@@ -136,17 +147,7 @@
 
         document.body.appendChild(script);
     </script>
-	<input id="overlayInput" 
-		style="
-		  position: absolute;
-		opacity: 0.01; / keeps keyboard working on iOS */
-		color: transparent;
-		background: transparent;
-		border: none;
-		pointer-events: none;
-		z-index: -1;
-       "
-       placeholder="Input your tactical commands"/>
+	
 
 <script>
   const overlayInput = document.getElementById('overlayInput');
