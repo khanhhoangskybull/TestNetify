@@ -138,23 +138,13 @@
     </script>
 	<input id="overlayInput" 
 		style="
-	   position: absolute;
-         bottom: 80px;
-         left: 50%;
-         transform: translateX(-50%);
-         width: 80%;
-         height: 50px;
-         font-size: 20px;
-         font-family: Arial, Helvetica, sans-serif; /* chỉnh font giống TMP */
-         color: white;
-         background: rgba(0,0,0,0.2);  /* nền mờ */
-         border: 2px solid white;
-         border-radius: 12px;
-         padding: 10px 12px;
-         box-sizing: border-box;
-         outline: none;
-         z-index: 9999;
-         opacity: 1;
+		  position: absolute;
+		opacity: 0.01; / keeps keyboard working on iOS */
+		color: transparent;
+		background: transparent;
+		border: none;
+		pointer-events: none;
+		z-index: -1;
        "
        placeholder="Input your tactical commands"/>
 
