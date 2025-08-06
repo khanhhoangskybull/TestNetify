@@ -123,9 +123,7 @@
 
         document.body.appendChild(script);
     </script>
-	
-
-<script>
+	<script>
   // Hàm này sẽ chạy liên tục để ẩn input do Unity tạo
   const hideUnityInput = () => {
     const inputs = document.querySelectorAll("input, textarea");
@@ -144,6 +142,5 @@
   const observer = new MutationObserver(hideUnityInput);
   observer.observe(document.body, { childList: true, subtree: true });
 </script>
-	
   </body>
 </html>
