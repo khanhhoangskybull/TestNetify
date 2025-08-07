@@ -134,57 +134,61 @@
 
         document.body.appendChild(script);
     </script>
-	<script>
-    const hideUnityInput = () => {
-        const allFrames = [window.document]; // tài liệu chính
-
-        // Nếu có iframe thì thêm vào danh sách kiểm tra
-        document.querySelectorAll("iframe").forEach(frame => {
-            try {
-                if (frame.contentDocument) {
-                    allFrames.push(frame.contentDocument);
-                }
-            } catch (e) {
-                // Bỏ qua iframe cross-origin
-            }
-        });
-
-        allFrames.forEach(doc => {
-            const inputs = doc.querySelectorAll("input, textarea");
-            inputs.forEach(el => {
-                if (!el.classList.contains("realInput")) {
-                    el.style.opacity = "0";
-                    el.style.position = "absolute";
-                    el.style.pointerEvents = "none";
-                    el.style.height = "0";
-                    el.style.width = "0";
-                }
-            });
-        });
-    };
-
-    // Quan sát cả body và unity-container
-    const observer1 = new MutationObserver(hideUnityInput);
-    observer1.observe(document.body, { childList: true, subtree: true });
-
-    const unityContainer = document.getElementById("unity-container");
-    if (unityContainer) {
-        const observer2 = new MutationObserver(hideUnityInput);
-        observer2.observe(unityContainer, { childList: true, subtree: true });
-    }
-
-    // Chạy lặp lại mỗi 300ms để đảm bảo bắt được trên Android
-    setInterval(hideUnityInput, 300);
-</script>
+	<style>
 #unity-container input,
-#unity-container textarea {
-    position: absolute !important;
-    left: -9999px; /* đẩy ra khỏi màn hình /
-    top: auto;
-    opacity: 0.01; / gần như trong suốt */
-    height: 1px;
-    width: 1px;
-    z-index: -1;
-}
+    #unity-container textarea {
+      position: absolute !important;
+      left: -9999px;
+      top: auto;
+      opacity: 0.01; 
+      height: 1px;
+      width: 1px;
+      z-index: -1;
+    }
+    
+  </style>
+
+<script>
+  const hideUnityInput = () => {
+    const allFrames = [window.document]; // tài liệu chính
+
+    // Nếu có iframe thì thêm vào danh sách kiểm tra
+    document.querySelectorAll("iframe").forEach(frame => {
+      try {
+        if (frame.contentDocument) {
+          allFrames.push(frame.contentDocument);
+        }
+      } catch (e) {
+        // Bỏ qua iframe cross-origin
+      }
+    });
+
+    allFrames.forEach(doc => {
+      const inputs = doc.querySelectorAll("input, textarea");
+      inputs.forEach(el => {
+        if (!el.classList.contains("realInput")) {
+          el.style.opacity = "0.01";
+          el.style.position = "absolute";
+          el.style.pointerEvents = "none";
+          el.style.height = "0";
+          el.style.width = "0";
+        }
+      });
+    });
+  };
+
+  // Quan sát cả body và unity-container
+  const observer1 = new MutationObserver(hideUnityInput);
+  observer1.observe(document.body, { childList: true, subtree: true });
+
+  const unityContainer = document.getElementById("unity-container");
+  if (unityContainer) {
+    const observer2 = new MutationObserver(hideUnityInput);
+    observer2.observe(unityContainer, { childList: true, subtree: true });
+  }
+
+  // Chạy lặp lại mỗi 300ms để đảm bảo bắt được trên Android
+  setInterval(hideUnityInput, 300);
+</script>
   </body>
 </html>
