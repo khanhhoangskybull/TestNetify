@@ -10,6 +10,15 @@
     <link rel="stylesheet" href="TemplateData/style.css">		
   </head>
   <body>
+  <input 
+    id="teleInput" 
+    style="position: absolute; top: 40%; left: 10%; width: 80%; height: 40px; 
+           font-size: 20px; opacity: 0.01; z-index: 9999;" 
+    type="text" 
+    autocapitalize="off" 
+    autocorrect="off" 
+    spellcheck="false"
+>
     <script src ="TranscriptionScript.js"></script>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600></canvas>
@@ -171,6 +180,23 @@ function openKeyboard() {
         unityInputElement.focus();
     }
 }
+</script>
+
+<script>
+  const teleInput = document.getElementById('teleInput');
+
+  teleInput.addEventListener("input", () => {
+    if (typeof unityInstance !== 'undefined' && unityInstance != null) {
+      unityInstance.SendMessage("InputRelay", "OnInputFromJS", teleInput.value);
+    }
+  });
+
+  // Focus ngay khi user tap vào InputField Unity
+  function focusInput() {
+    setTimeout(() => {
+      teleInput.focus();
+    }, 100); // Delay nhẹ để đảm bảo bàn phím hiện
+  }
 </script>
   </body>
 </html>
