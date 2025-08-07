@@ -10,15 +10,6 @@
     <link rel="stylesheet" href="TemplateData/style.css">		
   </head>
   <body>
-  <input 
-    id="teleInput" 
-    style="position: absolute; top: 40%; left: 10%; width: 80%; height: 40px; 
-           font-size: 20px; opacity: 0.01; z-index: 9999;" 
-    type="text" 
-    autocapitalize="off" 
-    autocorrect="off" 
-    spellcheck="false"
->
     <script src ="TranscriptionScript.js"></script>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600></canvas>
@@ -132,71 +123,5 @@
 
         document.body.appendChild(script);
     </script>
-<script>
-window.addEventListener('load', () => {
-    const observer = new MutationObserver(() => {
-        document.querySelectorAll('input, textarea').forEach(el => {
-            el.style.opacity = '0';
-            el.style.position = 'absolute';
-            el.style.top = '-1000px';
-            el.style.left = '-1000px';
-            el.style.height = '0px';
-            el.style.width = '0px';
-            el.style.pointerEvents = 'none';
-        });
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-});
-</script>
-
-<script>
-let unityInputElement = null;
-let unityInstance = null;
-
-function setupCustomInputBridge(instance) {
-    unityInstance = instance;
-
-    unityInputElement = document.createElement('input');
-    unityInputElement.type = 'text';
-    unityInputElement.style.position = 'absolute';
-    unityInputElement.style.opacity = '0'; // Ẩn input
-    unityInputElement.style.zIndex = '-1';
-    document.body.appendChild(unityInputElement);
-
-    unityInputElement.addEventListener('input', function () {
-        if (unityInstance) {
-            unityInstance.SendMessage('InputRelay', 'OnInputReceived', unityInputElement.value);
-        }
-    });
-}
-
-function openKeyboard() {
-    if (unityInputElement) {
-        unityInputElement.value = ''; // Clear trước
-        unityInputElement.focus();
-    }
-}
-</script>
-
-<script>
-  const teleInput = document.getElementById('teleInput');
-
-  teleInput.addEventListener("input", () => {
-    if (typeof unityInstance !== 'undefined' && unityInstance != null) {
-      unityInstance.SendMessage("InputRelay", "OnInputFromJS", teleInput.value);
-    }
-  });
-
-  // Focus ngay khi user tap vào InputField Unity
-  function focusInput() {
-    setTimeout(() => {
-      teleInput.focus();
-    }, 100); // Delay nhẹ để đảm bảo bàn phím hiện
-  }
-</script>
   </body>
 </html>
