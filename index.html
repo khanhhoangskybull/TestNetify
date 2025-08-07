@@ -127,12 +127,13 @@
 #unity-container input,
     #unity-container textarea {
       position: absolute !important;
-      left: -9999px;
-      top: auto;
-      opacity: 0.01; 
+      left: 0;
+      top: 0;
+      opacity: 0 !important; 
       height: 1px;
       width: 1px;
       z-index: -1;
+	  pointer-events: none;
     }
     
   </style>
