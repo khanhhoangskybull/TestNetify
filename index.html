@@ -123,37 +123,25 @@
 
         document.body.appendChild(script);
     </script>
-<style>
-#unity-container input,
-#unity-container textarea {
-  font-size: 16px !important;       /* BẮT BUỘC để Android hiển thị bàn phím */
-  position: absolute !important;
-  left: 0 !important;
-  top: 0 !important;
-  width: 1px !important;
-  height: 1px !important;
-  background: transparent !important;
-  color: transparent !important;
-  caret-color: transparent !important;
-  border: none !important;
-  outline: none !important;
-  z-index: 9999 !important;
-  pointer-events: auto !important; /* Đừng tắt pointer-events */
-}
-</style>	
 <script>
-  function fixZIndexOnInputFocus() {
-    const unityContainer = document.getElementById('unity-container');
-    document.addEventListener('focusin', (e) => {
-      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
-        unityContainer.style.zIndex = "0";
-      }
+window.addEventListener('load', () => {
+    const observer = new MutationObserver(() => {
+        document.querySelectorAll('input, textarea').forEach(el => {
+            el.style.opacity = '0';
+            el.style.position = 'absolute';
+            el.style.top = '-1000px';
+            el.style.left = '-1000px';
+            el.style.height = '0px';
+            el.style.width = '0px';
+            el.style.pointerEvents = 'none';
+        });
     });
-    document.addEventListener('focusout', () => {
-      unityContainer.style.zIndex = "1";
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
     });
-  }
-  fixZIndexOnInputFocus();
+});
 </script>
   </body>
 </html>
