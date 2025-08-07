@@ -143,5 +143,34 @@ window.addEventListener('load', () => {
     });
 });
 </script>
+
+<script>
+let unityInputElement = null;
+let unityInstance = null;
+
+function setupCustomInputBridge(instance) {
+    unityInstance = instance;
+
+    unityInputElement = document.createElement('input');
+    unityInputElement.type = 'text';
+    unityInputElement.style.position = 'absolute';
+    unityInputElement.style.opacity = '0'; // Ẩn input
+    unityInputElement.style.zIndex = '-1';
+    document.body.appendChild(unityInputElement);
+
+    unityInputElement.addEventListener('input', function () {
+        if (unityInstance) {
+            unityInstance.SendMessage('InputRelay', 'OnInputReceived', unityInputElement.value);
+        }
+    });
+}
+
+function openKeyboard() {
+    if (unityInputElement) {
+        unityInputElement.value = ''; // Clear trước
+        unityInputElement.focus();
+    }
+}
+</script>
   </body>
 </html>
