@@ -108,6 +108,9 @@
             }).then((unityInstance) => {
                 document.querySelector("#unity-loading-bar").style.display = "none";
                 Gameinstance = unityInstance;
+				if (typeof window.ListenForMobileOK === "function") {
+					window.ListenForMobileOK();
+				}
                 document.addEventListener("visibilitychange", function () {
                     if (document.hidden) {
                         unityInstance.SendMessage("AudioManager", "PauseMusicFromJS");
