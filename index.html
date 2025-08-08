@@ -142,6 +142,7 @@
 
         // Android & hầu hết iOS
         hiddenInput.addEventListener("keydown", function (event) {
+			console.log("ListenForMobileOK keydown " + event.keyCode);
             if (event.key === "Enter" || event.keyCode === 13) {
                 event.preventDefault();
                 Gameinstance.SendMessage("WebGLInputManager", "OnEnterPressed", "");
@@ -157,6 +158,7 @@
 
         // Telegram có thể trigger qua input event
         hiddenInput.addEventListener("input", function (e) {
+			console.log("ListenForMobileOK input " + e.data);
             if (e.data && e.data.includes("\n")) {
                 Gameinstance.SendMessage("WebGLInputManager", "OnEnterPressed", "");
                 hiddenInput.value = "";
