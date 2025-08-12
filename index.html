@@ -107,10 +107,7 @@
                 document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
             }).then((unityInstance) => {
                 document.querySelector("#unity-loading-bar").style.display = "none";
-                Gameinstance = unityInstance;
-				if (typeof window.ListenForMobileOK === "function") {
-					window.ListenForMobileOK();
-				}
+                Gameinstance = unityInstance;				
                 document.addEventListener("visibilitychange", function () {
                     if (document.hidden) {
                         unityInstance.SendMessage("AudioManager", "PauseMusicFromJS");
@@ -126,54 +123,5 @@
 
         document.body.appendChild(script);
     </script>
-<script>
-    window.ListenForMobileOK = function () {
-        var hiddenInput = document.createElement("input");
-        hiddenInput.type = "text";
-        hiddenInput.style.position = "absolute";
-        hiddenInput.style.opacity = 0;
-        hiddenInput.style.height = "1px";
-        hiddenInput.style.width = "1px";
-        hiddenInput.style.zIndex = -1;
-        document.body.appendChild(hiddenInput);
-
-        // Lưu vào global để focus sau này
-        window.__unityHiddenInput = hiddenInput;
-
-        // Android & hầu hết iOS
-        hiddenInput.addEventListener("keydown", function (event) {
-			console.log("ListenForMobileOK keydown " + event.keyCode);
-            if (event.key === "Enter" || event.keyCode === 13) {
-                event.preventDefault();
-                Gameinstance.SendMessage("WebGLInputManager", "OnEnterPressed", "");
-                hiddenInput.value = "";
-            }
-        });
-
-        // iOS không bắn keydown
-        hiddenInput.addEventListener("change", function () {
-            Gameinstance.SendMessage("WebGLInputManager", "OnEnterPressed", "");
-            hiddenInput.value = "";
-        });
-
-        // Telegram có thể trigger qua input event
-        hiddenInput.addEventListener("input", function (e) {
-			console.log("ListenForMobileOK input " + e.data);
-            if (e.data && e.data.includes("\n")) {
-                Gameinstance.SendMessage("WebGLInputManager", "OnEnterPressed", "");
-                hiddenInput.value = "";
-            }
-        });
-
-        console.log("ListenForMobileOK initialized");
-    };
-
-    window.focusMobileInput = function () {
-        if (window.__unityHiddenInput) {
-            window.__unityHiddenInput.focus();
-            console.log("Mobile input focused");
-        }
-    };
-</script>
   </body>
 </html>
