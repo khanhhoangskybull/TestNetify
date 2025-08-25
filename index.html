@@ -119,31 +119,49 @@
       document.body.appendChild(script);
     </script>
 <script>
-  // Override Unity WebGL input creation
-  if (typeof window.WebGLInput !== "undefined") {
-    window.WebGLInput.createInput = function() {
-      console.log("Preventing Unity from creating native input.");
-      return null;
-    }
+(function () {
+  function patch(el) {
+    if (!el || el.dataset._oskPatched === "1") return;
+    el.dataset._oskPatched = "1";
+
+    // Để Unity vẫn focus/đọc selection được:
+    el.removeAttribute("readonly");                   // KHÔNG readonly
+    el.removeAttribute("disabled");                   // KHÔNG disabled
+    // Ngăn hệ thống cố bật bàn phím (nhiều webview tôn trọng inputmode=none):
+    el.setAttribute("inputmode", "none");
+    el.setAttribute("autocomplete", "off");
+    el.setAttribute("autocapitalize", "off");
+    el.setAttribute("autocorrect", "off");
+    el.setAttribute("spellcheck", "false");
+
+    // Ẩn khỏi mắt người dùng nhưng vẫn focus được:
+    el.style.opacity = 0;
+    el.style.position = "fixed";
+    el.style.top = "-10000px";
+    el.style.left = "-10000px";
+    el.style.width = "1px";
+    el.style.height = "1px";
+    // LƯU Ý: đừng dùng pointerEvents = none; (một số trình duyệt sẽ từ chối focus)
   }
 
-  // Hoặc chặn luôn mọi input element ngay khi nó được thêm
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node.tagName === "INPUT" || node.tagName === "TEXTAREA") {
-          node.setAttribute("inputmode", "none"); 
-		  node.setAttribute("readonly", true);
-		  node.style.opacity = 0;           // trong suốt
-		  node.style.position = "absolute"; // đẩy khỏi vùng nhìn
-		  node.style.left = "-9999px";
-		  node.style.pointerEvents = "none"; // không bắt tap
-		  console.log("Hidden Unity input field (caret still works)");
+  // Patch những input đã có (nếu Unity tạo sớm)
+  Array.prototype.forEach.call(document.querySelectorAll("input,textarea"), patch);
+
+  // Patch những input Unity tạo sau này
+  const mo = new MutationObserver(muts => {
+    for (const m of muts) {
+      for (const n of m.addedNodes) {
+        if (n && (n.tagName === "INPUT" || n.tagName === "TEXTAREA")) patch(n);
+        // Unity đôi khi bọc input trong div
+        if (n && n.querySelectorAll) {
+          n.querySelectorAll("input,textarea").forEach(patch);
         }
-      });
-    });
+      }
+    }
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  mo.observe(document.documentElement, { childList: true, subtree: true });
+})();
 </script>
+
   </body>
 </html>
