@@ -118,13 +118,29 @@
       };
       document.body.appendChild(script);
     </script>
-	<script>
-  document.addEventListener("focusin", function(e) {
-    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
-      e.target.setAttribute("inputmode", "none");
-      e.target.setAttribute("readonly", true);
+<script>
+  // Override Unity WebGL input creation
+  if (typeof window.WebGLInput !== "undefined") {
+    window.WebGLInput.createInput = function() {
+      console.log("Preventing Unity from creating native input.");
+      return null;
     }
+  }
+
+  // Hoặc chặn luôn mọi input element ngay khi nó được thêm
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.tagName === "INPUT" || node.tagName === "TEXTAREA") {
+          node.setAttribute("inputmode", "none");
+          node.setAttribute("readonly", true);
+          node.style.display = "none"; // ẩn luôn cái ô trắng
+          console.log("Blocked Unity input field");
+        }
+      });
+    });
   });
+  observer.observe(document.body, { childList: true, subtree: true });
 </script>
   </body>
 </html>
