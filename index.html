@@ -132,10 +132,13 @@
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.tagName === "INPUT" || node.tagName === "TEXTAREA") {
-          node.setAttribute("inputmode", "none");
-          node.setAttribute("readonly", true);
-          node.style.display = "none"; // ẩn luôn cái ô trắng
-          console.log("Blocked Unity input field");
+          node.setAttribute("inputmode", "none"); 
+		  node.setAttribute("readonly", true);
+		  node.style.opacity = 0;           // trong suốt
+		  node.style.position = "absolute"; // đẩy khỏi vùng nhìn
+		  node.style.left = "-9999px";
+		  node.style.pointerEvents = "none"; // không bắt tap
+		  console.log("Hidden Unity input field (caret still works)");
         }
       });
     });
