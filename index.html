@@ -118,5 +118,13 @@
       };
       document.body.appendChild(script);
     </script>
+	<script>
+  document.addEventListener("focusin", function(e) {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
+      e.target.setAttribute("inputmode", "none");
+      e.target.setAttribute("readonly", true);
+    }
+  });
+</script>
   </body>
 </html>
