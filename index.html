@@ -102,10 +102,7 @@
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
           Gameinstance =unityInstance;
-		  window.unityInstance=unityInstance;
-          fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
+		  window.unityInstance=unityInstance;          
         }).catch((message) => {
           alert(message);
         });
