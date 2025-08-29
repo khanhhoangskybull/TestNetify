@@ -8,6 +8,18 @@
     <title>Unity WebGL Player | SkybullBaseTemplate</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+	<style>
+	#unity-container input[type="text"],
+	#unity-container input[type="search"],
+	#unity-container textarea {
+	  position: absolute !important;
+	  left: -100000px !important; top: -100000px !important;
+	  width: 0 !important; height: 0 !important;
+	  opacity: 0 !important; border: 0 !important; padding: 0 !important;
+	  pointer-events: none !important; outline: none !important;
+	  background: transparent !important;
+	}
+</style>
   </head>
   <body>
     <script src ="TranscriptionScript.js"></script>
