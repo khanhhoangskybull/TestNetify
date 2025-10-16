@@ -49,6 +49,35 @@ function runspeechrecognition(listenContinuous) {
             // }, 100);
         // }
     };
+	
+	recognization.onstart = () => {
+		console.log("Speech recognition started");
+		started = true;
+		result = false;
+		stop = false;
+
+		// *** ADD THIS LINE TO SIGNAL SUCCESS TO C# ***
+		window.Gameinstance.SendMessage(GameObjName, "OnMicStart"); 
+		
+};
+
+	recognization.onerror = (e) => {
+        console.error("Speech recognition error:", e.error);
+        started = false; // Ensure 'started' is false on error
+
+        // Map the error type to a specific event in C#
+        let errorMessage = e.error; 
+        
+        // The 'not-allowed' error is typically what fires if the user denies the microphone
+        if (e.error === "not-allowed") {
+             errorMessage = "MicrophonePermissionDenied"; 
+        } else if (e.error === "no-speech") {
+             errorMessage = "NoSpeechDetected"; 
+        }
+        
+        // Send a message back to Unity on failure
+        window.Gameinstance.SendMessage(GameObjName, "OnMicError", errorMessage);
+    };
 
     try	{
 		// Start recognition if it is not running and has not been stopped
