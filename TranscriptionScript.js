@@ -22,73 +22,36 @@ function runspeechrecognition(listenContinuous) {
         var transcript = e.results[0][0].transcript;
         console.log("Speech recognition result:", transcript);
 
-        window.Gameinstance.SendMessage(GameObjName, "OnMicResult", transcript);
+        window.Gameinstance.SendMessage(GameObjName, "Result", transcript);
         result = true;
 
-        // if (listenContinuous && !stop) {
-            // setTimeout(() => {
-                // if (!started) {
-                    // recognization.start(); // Restart recognition
-                // }
-            // }, 100);
-        // }
+        if (listenContinuous && !stop) {
+            setTimeout(() => {
+                if (!started) {
+                    recognization.start(); // Restart recognition
+                }
+            }, 100);
+        }
     };
 
     recognization.onend = () => {
         console.log("Speech recognition ended");
         started = false;
-		
-		window.Gameinstance.SendMessage(GameObjName, "OnMicEnd");
-		stop = true;
 
-        // if (!result && listenContinuous && !stop) {
-            // setTimeout(() => {
-                // if (!started) {
-                    // recognization.start(); // Restart recognition
-                // }
-            // }, 100);
-        // }
-    };
-	
-	recognization.onstart = () => {
-		console.log("Speech recognition started");
-		started = true;
-		result = false;
-		stop = false;
-
-		// *** ADD THIS LINE TO SIGNAL SUCCESS TO C# ***
-		window.Gameinstance.SendMessage(GameObjName, "OnMicStart"); 
-		
-};
-
-	recognization.onerror = (e) => {
-        console.error("Speech recognition error:", e.error);
-        started = false; // Ensure 'started' is false on error
-
-        // Map the error type to a specific event in C#
-        let errorMessage = e.error; 
-        
-        // The 'not-allowed' error is typically what fires if the user denies the microphone
-        if (e.error === "not-allowed") {
-             errorMessage = "MicrophonePermissionDenied"; 
-        } else if (e.error === "no-speech") {
-             errorMessage = "NoSpeechDetected"; 
+        if (!result && listenContinuous && !stop) {
+            setTimeout(() => {
+                if (!started) {
+                    recognization.start(); // Restart recognition
+                }
+            }, 100);
         }
-        
-        // Send a message back to Unity on failure
-        window.Gameinstance.SendMessage(GameObjName, "OnMicError", errorMessage);
     };
 
-    try	{
-		// Start recognition if it is not running and has not been stopped
-		if (!started && stop) {
-			stop = false;
-			recognization.start();
-			console.log("Start recognition if it is not running and has not been stopped");
-		}
-	} catch (error) {
-	  console.error(error);
-	}
+    // Start recognition if it is not running and has not been stopped
+    if (!started && stop) {
+        stop = false;
+        recognization.start();
+    }
 }
 
 function stoprecognition() {
