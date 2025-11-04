@@ -9,36 +9,36 @@
     <title>Unity WebGL Player | SkybullBaseTemplate</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-            width: 100%;
-            background: black;
-        }
+	  html, body {
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		height: 100%;
+		width: 100%;
+		background: black;
+	  }
 
-        #unity-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            background: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+	  #unity-container {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		overflow: hidden;
+		background: black;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	  }
 
-        #unity-canvas {
-            display: block;
-            background: black;
-        }
-    </style>
-</head>
+	  #unity-canvas {
+		display: block;
+		background: black;
+	  }
+</style>	
+  </head>
   <body>
     <script src ="TranscriptionScript.js"></script>
     <div id="unity-container" class="unity-desktop">
@@ -102,6 +102,32 @@
         productVersion: "0.1.0",
         showBanner: unityShowBanner,
       };
+	  
+	  function maintainAspectRatio() {
+		  const containerWidth = window.innerWidth;
+		  const containerHeight = window.innerHeight;
+		  const targetAspectRatio = 9 / 16;
+		  const containerAspectRatio = containerWidth / containerHeight;
+
+		  let newWidth, newHeight;
+
+		  if (containerAspectRatio > targetAspectRatio) {
+			newHeight = containerHeight;
+			newWidth = newHeight * targetAspectRatio;
+		  } else {
+			newWidth = containerWidth;
+			newHeight = newWidth / targetAspectRatio;
+		  }
+
+		  canvas.style.width = newWidth + "px";
+		  canvas.style.height = newHeight + "px";
+		}
+	
+		window.addEventListener("resize", maintainAspectRatio);
+		window.addEventListener("load", maintainAspectRatio);
+
+		document.querySelector("#unity-loading-bar").style.display = "block";
+
 
       // By default Unity keeps WebGL canvas render target size matched with
       // the DOM size of the canvas element (scaled by window.devicePixelRatio)
@@ -123,15 +149,8 @@
         // To lower canvas resolution on mobile devices to gain some
         // performance, uncomment the following line:
         // config.devicePixelRatio = 1;
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-
-        canvas.style.width = "360px";
-        canvas.style.height = "640px";
-      }
-
-      loadingBar.style.display = "block";
-
+      } 
+	  
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
@@ -140,23 +159,65 @@
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
           Gameinstance =unityInstance;
-		  window.unityInstance=unityInstance;
-          fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
+		  window.unityInstance=unityInstance;          
         }).catch((message) => {
           alert(message);
         });
       };
       document.body.appendChild(script);
     </script>
-	<script>
-  document.addEventListener("focusin", function(e) {
-    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
-      e.target.setAttribute("inputmode", "none");
-      e.target.setAttribute("readonly", true);
+<script>
+(function () {
+  function patch(el) {
+    if (!el || el.dataset._oskPatched === "1") return;
+    el.dataset._oskPatched = "1";
+
+    // Để Unity vẫn focus/đọc selection được:
+    el.removeAttribute("readonly");                   // KHÔNG readonly
+    el.removeAttribute("disabled");                   // KHÔNG disabled
+    // Ngăn hệ thống cố bật bàn phím (nhiều webview tôn trọng inputmode=none):
+    el.setAttribute("inputmode", "none");
+    el.setAttribute("autocomplete", "off");
+    el.setAttribute("autocapitalize", "off");
+    el.setAttribute("autocorrect", "off");
+    el.setAttribute("spellcheck", "false");
+
+    // Ẩn khỏi mắt người dùng nhưng vẫn focus được:
+    el.style.opacity = 0;
+    el.style.position = "fixed";
+    el.style.top = "-10000px";
+    el.style.left = "-10000px";
+    el.style.width = "1px";
+    el.style.height = "1px";
+    // LƯU Ý: đừng dùng pointerEvents = none; (một số trình duyệt sẽ từ chối focus)
+  }
+
+  // Patch những input đã có (nếu Unity tạo sớm)
+  Array.prototype.forEach.call(document.querySelectorAll("input,textarea"), patch);
+
+  // Patch những input Unity tạo sau này
+  const mo = new MutationObserver(muts => {
+    for (const m of muts) {
+      for (const n of m.addedNodes) {
+        if (n && (n.tagName === "INPUT" || n.tagName === "TEXTAREA")) patch(n);
+        // Unity đôi khi bọc input trong div
+        if (n && n.querySelectorAll) {
+          n.querySelectorAll("input,textarea").forEach(patch);
+        }
+      }
+    }
+  });
+  mo.observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.enableClosingConfirmation();
     }
   });
 </script>
+
   </body>
 </html>
