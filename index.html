@@ -1,182 +1,205 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-    <script src="ByteBrewSDK.js"></script>
+    <!-- Telegram & TON Connect -->
     <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
     <script src="https://unpkg.com/@tonconnect/ui@2.1.0/dist/tonconnect-ui.min.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | SkybullBaseTemplate</title>
+
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+
+    <!-- Viewport cơ bản; JS sẽ tinh chỉnh cho mobile khi cần -->
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+
     <style>
-	  html, body {
-		margin: 0;
-		padding: 0;
-		overflow: hidden;
-		height: 100%;
-		width: 100%;
-		background: black;
-	  }
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+            background: black;
+        }
 
-	  #unity-container {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		overflow: hidden;
-		background: black;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	  }
+        #unity-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-	  #unity-canvas {
-		display: block;
-		background: black;
-	  }
-</style>	
-  </head>
+        #unity-canvas {
+            display: block;
+            background: black;
+            outline: none;
+        }
+        /* Ẩn footer mặc định của template Unity (nếu có style.css cũ) */
+        #unity-footer {
+            display: none !important;
+        }
+    </style>
+</head>
 <body>
+    <!-- SDK / Script của bạn -->
     <script src="ByteBrewSDK.js"></script>
     <script src="TranscriptionScript.js"></script>
+
     <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas" width=1080 height=1920 tabindex="1"></canvas>
+        <!-- Kích thước khởi tạo 9:16; JS dưới sẽ luôn giữ 9:16 theo viewport -->
+        <canvas id="unity-canvas" width="1080" height="1920" tabindex="1"></canvas>
+
         <div id="unity-loading-bar">
             <div id="unity-logo"></div>
             <div id="unity-progress-bar-empty">
                 <div id="unity-progress-bar-full"></div>
             </div>
         </div>
+
+        <!-- Giữ lại warning banner để Unity có thể show cảnh báo -->
+        <div id="unity-warning"></div>
     </div>
+
     <script>
-        window.tonConnect = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: "https://ftpserver.thedungeondiver.com/api/ftp/File/get-file/mayhem_mainet.json",
-            testnet: false
-        });
+    // ===== TON Connect UI (có thể chỉnh trong Player Settings qua placeholder) =====
+    try {
+      window.tonConnect = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: "",   // ví dụ: https://ftpserver.thedungeondiver.com/api/ftp/File/get-file/mayhem_mainet.json
+        testnet:                // true/false
+      });
+    } catch (e) {
+      console.warn("TON Connect init failed:", e);
+    }
 
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
+    // ===== Telegram WebApp =====
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      try { Telegram.WebApp.expand(); } catch(_) {}
+    }
 
-        var container = document.querySelector("#unity-container");
-        var canvas = document.querySelector("#unity-canvas");
-        var loadingBar = document.querySelector("#unity-loading-bar");
-        var progressBarFull = document.querySelector("#unity-progress-bar-full");
-        var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-        var warningBanner = document.querySelector("#unity-warning");
-        var Gameinstance = null;
-        // Shows a temporary message banner/ribbon for a few seconds, or
-        // a permanent error message on top of the canvas if type=='error'.
-        // If type=='warning', a yellow highlight color is used.
-        // Modify or remove this function to customize the visually presented
-        // way that non-critical warnings and error messages are presented to the
-        // user.
-        function unityShowBanner(msg, type) {
-            function updateBannerVisibility() {
-                warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-            }
-            var div = document.createElement('div');
-            div.innerHTML = msg;
-            warningBanner.appendChild(div);
-            if (type == 'error') div.style = 'background: red; padding: 10px;';
-            else {
-                if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-                setTimeout(function () {
-                    warningBanner.removeChild(div);
-                    updateBannerVisibility();
-                }, 5000);
-            }
-            updateBannerVisibility();
+    var container       = document.querySelector("#unity-container");
+    var canvas          = document.querySelector("#unity-canvas");
+    var loadingBar      = document.querySelector("#unity-loading-bar");
+    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+    var warningBanner   = document.querySelector("#unity-warning");
+    var fullscreenButton= document.querySelector("#unity-fullscreen-button"); // optional (không có trong DOM)
+    var Gameinstance    = null;
+
+    function unityShowBanner(msg, type) {
+      function updateBannerVisibility() {
+        warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+      }
+      var div = document.createElement('div');
+      div.innerHTML = msg;
+      warningBanner.appendChild(div);
+      if (type === 'error') div.style = 'background: red; padding: 10px;';
+      else {
+        if (type === 'warning') div.style = 'background: yellow; padding: 10px;';
+        setTimeout(function () {
+          try { warningBanner.removeChild(div); } catch(_) {}
+          updateBannerVisibility();
+        }, 5000);
+      }
+      updateBannerVisibility();
+    }
+
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/ChatGPTPVP.loader.js";
+    var config = {
+      dataUrl:       buildUrl + "/ChatGPTPVP.data.unityweb",
+      frameworkUrl:  buildUrl + "/ChatGPTPVP.framework.js.unityweb",
+      codeUrl:       buildUrl + "/ChatGPTPVP.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName:   "Skybull",
+      productName:   "SkybullBaseTemplate",
+      productVersion:"0.1.0",
+      showBanner:    unityShowBanner
+      // config.matchWebGLToCanvasSize = false; // có thể bật nếu muốn tự điều khiển render target size
+    };
+
+    // Giữ tỷ lệ 9:16 theo viewport (điện thoại dọc)
+    function maintainAspectRatio() {
+      const containerWidth  = window.innerWidth;
+      const containerHeight = window.innerHeight;
+      const target = 9 / 16;
+      const ratio  = containerWidth / containerHeight;
+
+      let newWidth, newHeight;
+      if (ratio > target) {
+        newHeight = containerHeight;
+        newWidth  = newHeight * target;
+      } else {
+        newWidth  = containerWidth;
+        newHeight = newWidth / target;
+      }
+      canvas.style.width  = newWidth  + "px";
+      canvas.style.height = newHeight + "px";
+    }
+
+    window.addEventListener("resize", maintainAspectRatio);
+    window.addEventListener("load", maintainAspectRatio);
+
+    // Mobile tweaks
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      var meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+      document.getElementsByTagName('head')[0].appendChild(meta);
+      container.className = "unity-mobile";
+      canvas.className = "unity-mobile";
+      // Giảm độ phân giải để tăng performance (tuỳ chọn):
+      // config.devicePixelRatio = 1;
+    } else {
+      // Desktop: nếu muốn kích thước cố định, có thể bật 2 dòng dưới
+      // canvas.style.width  = "360px";
+      // canvas.style.height = "640px";
+    }
+
+    loadingBar.style.display = "block";
+
+    // Nạp loader và khởi tạo Unity
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        progressBarFull.style.width = (100 * progress) + "%";
+      }).then((unityInstance) => {
+        loadingBar.style.display = "none";
+        Gameinstance = unityInstance;
+        window.unityInstance = unityInstance;
+
+        // Nếu có nút fullscreen trong DOM, gán hành vi
+        if (fullscreenButton) {
+          fullscreenButton.onclick = () => unityInstance.SetFullscreen(1);
         }
-
-        var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/ChatGPTPVP.loader.js";
-        var config = {
-            dataUrl: buildUrl + "/ChatGPTPVP.data.unityweb",
-            frameworkUrl: buildUrl + "/ChatGPTPVP.framework.js.unityweb",
-            codeUrl: buildUrl + "/ChatGPTPVP.wasm.unityweb",
-            streamingAssetsUrl: "StreamingAssets",
-            companyName: "Skybull",
-            productName: "SkybullBaseTemplate",
-            productVersion: "0.1.0",
-            showBanner: unityShowBanner,
-        };
-
-        function maintainAspectRatio() {
-            const containerWidth = window.innerWidth;
-            const containerHeight = window.innerHeight;
-            const targetAspectRatio = 9 / 16;
-            const containerAspectRatio = containerWidth / containerHeight;
-
-            let newWidth, newHeight;
-
-            if (containerAspectRatio > targetAspectRatio) {
-                newHeight = containerHeight;
-                newWidth = newHeight * targetAspectRatio;
-            } else {
-                newWidth = containerWidth;
-                newHeight = newWidth / targetAspectRatio;
-            }
-
-            canvas.style.width = newWidth + "px";
-            canvas.style.height = newHeight + "px";
-        }
-
-        window.addEventListener("resize", maintainAspectRatio);
-        window.addEventListener("load", maintainAspectRatio);
-
-        document.querySelector("#unity-loading-bar").style.display = "block";
-
-
-        // By default Unity keeps WebGL canvas render target size matched with
-        // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-        // Set this to false if you want to decouple this synchronization from
-        // happening inside the engine, and you would instead like to size up
-        // the canvas DOM size and WebGL render target sizes yourself.
-        // config.matchWebGLToCanvasSize = false;
-
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            // Mobile device style: fill the whole browser client area with the game canvas:
-
-            var meta = document.createElement('meta');
-            meta.name = 'viewport';
-            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-            document.getElementsByTagName('head')[0].appendChild(meta);
-            container.className = "unity-mobile";
-            canvas.className = "unity-mobile";
-
-            // To lower canvas resolution on mobile devices to gain some
-            // performance, uncomment the following line:
-            // config.devicePixelRatio = 1;
-        }
-
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                progressBarFull.style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                loadingBar.style.display = "none";
-                Gameinstance = unityInstance;
-                window.unityInstance = unityInstance;
-            }).catch((message) => {
-                alert(message);
-            });
-        };
-        document.body.appendChild(script);
+      }).catch((message) => {
+        alert(message);
+      });
+    };
+    document.body.appendChild(script);
     </script>
+
+    <!-- Patch input để Unity vẫn focus selection nhưng không bật bàn phím ảo -->
     <script>
         (function () {
             function patch(el) {
                 if (!el || el.dataset._oskPatched === "1") return;
                 el.dataset._oskPatched = "1";
 
-                // Để Unity vẫn focus/đọc selection được:
-                el.removeAttribute("readonly");                   // KHÔNG readonly
-                el.removeAttribute("disabled");                   // KHÔNG disabled
-                // Ngăn hệ thống cố bật bàn phím (nhiều webview tôn trọng inputmode=none):
+                // Cho phép focus/selection:
+                el.removeAttribute("readonly");
+                el.removeAttribute("disabled");
+
+                // Ngăn webview/browsers bật bàn phím:
                 el.setAttribute("inputmode", "none");
                 el.setAttribute("autocomplete", "off");
                 el.setAttribute("autocapitalize", "off");
@@ -190,35 +213,36 @@
                 el.style.left = "-10000px";
                 el.style.width = "1px";
                 el.style.height = "1px";
-                // LƯU Ý: đừng dùng pointerEvents = none; (một số trình duyệt sẽ từ chối focus)
+                // Không dùng pointer-events: none; để tránh mất focus ở vài trình duyệt
             }
 
-            // Patch những input đã có (nếu Unity tạo sớm)
+            // Patch những input đã có
             Array.prototype.forEach.call(document.querySelectorAll("input,textarea"), patch);
 
-            // Patch những input Unity tạo sau này
+            // Patch những input tạo sau này (Unity tạo động)
             const mo = new MutationObserver(muts => {
                 for (const m of muts) {
                     for (const n of m.addedNodes) {
-                        if (n && (n.tagName === "INPUT" || n.tagName === "TEXTAREA")) patch(n);
-                        // Unity đôi khi bọc input trong div
-                        if (n && n.querySelectorAll) {
-                            n.querySelectorAll("input,textarea").forEach(patch);
-                        }
+                        if (!n) continue;
+                        if (n.tagName === "INPUT" || n.tagName === "TEXTAREA") patch(n);
+                        if (n.querySelectorAll) n.querySelectorAll("input,textarea").forEach(patch);
                     }
                 }
             });
             mo.observe(document.documentElement, { childList: true, subtree: true });
         })();
     </script>
-    <script type="text/javascript">
+
+    <!-- Telegram: xác nhận đóng app trong webview nếu cần -->
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             if (window.Telegram && Telegram.WebApp) {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.enableClosingConfirmation();
+                try {
+                    Telegram.WebApp.ready();
+                    Telegram.WebApp.enableClosingConfirmation();
+                } catch (_) { }
             }
         });
     </script>
-
 </body>
 </html>
